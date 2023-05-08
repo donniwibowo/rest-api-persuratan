@@ -69,20 +69,32 @@ class User extends ResourceController
 
     public function logout() {
         $user_token = $this->request->getVar('user_token');
-        $result = array();
+        $response = array();
 
         if(UserModel::isUserTokenValid($user_token)) {
-            $result = array(
-                'status' => 200,
-                'message' => 'User token valid'
-            );
+            $api_login_id = UserModel::decrypt($user_token);
+            $model = UserApiLoginModel::doClockOut($api_login_id);
+
+            if($model) {
+                $response = array(
+                    'status' => 200,
+                    'message' => 'Log out success'
+                );
+            } else {
+                $response = array(
+                    'status' => 500,
+                    'message' => $model->errors()
+                );
+            }
+
+
         } else {
-            $result = array(
+            $response = array(
                 'status' => 201,
                 'message' => 'Invalid user token'
             );
         }
 
-        return $this->respond($result);
+        return $this->respond($response);
     }
 }

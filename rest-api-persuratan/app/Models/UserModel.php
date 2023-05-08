@@ -50,10 +50,10 @@ class UserModel extends Model
 
     public static function isUserTokenValid($user_token) {
         if($user_token != '') {
-            $api_user_id = self::decrypt($user_token);
+            $api_login_id = self::decrypt($user_token);
 
             $apiLoginModel = new UserApiLoginModel();
-            $apiLoginModel = $apiLoginModel->find($api_user_id);
+            $apiLoginModel = $apiLoginModel->find($api_login_id);
             if($apiLoginModel) {
                 if($apiLoginModel['clock_out'] == '') {
                     return true;
@@ -63,4 +63,5 @@ class UserModel extends Model
 
         return false;
     }
+
 }
