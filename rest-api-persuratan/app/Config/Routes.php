@@ -36,6 +36,10 @@ $routes->group("api/user", function ($routes) {
     // $routes->post('test-post/(:any)/(:any)', 'Employee::testpost/$1/$2');
 });
 
+$routes->group("api/form", function ($routes) {
+    $routes->get('getall/(:any)', 'Form::getallformtype/$1');
+});
+
 
 /*
  * --------------------------------------------------------------------
