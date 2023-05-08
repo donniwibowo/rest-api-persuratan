@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Models\UserApiLoginModel;
 
 class UserModel extends Model
 {
@@ -47,16 +48,19 @@ class UserModel extends Model
 
     }
 
-    public function getLoginInformation() {
-        $result = array(
-            'user_id'       => $this->user_id,
-            'is_superadmin' => $this->is_superadmin,
-            'email'         => $this->email,
-            'phone'         => $this->phone,
-            'fullname'      => ucwords(strtolower($this->fullname)),
-           
-        );
+    public static function isUserTokenValid($user_token) {
+        if($user_token != '') {
+            $api_user_id = self::decrypt($user_token);
 
-        return $result;
+            $apiLoginModel = new UserApiLoginModel();
+            $apiLoginModel = $apiLoginModel->find($api_user_id);
+            if($apiLoginModel) {
+                if($apiLoginModel['clock_out'] == '') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

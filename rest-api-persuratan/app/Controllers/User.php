@@ -66,4 +66,23 @@ class User extends ResourceController
         }
 
     }
+
+    public function logout() {
+        $user_token = $this->request->getVar('user_token');
+        $result = array();
+
+        if(UserModel::isUserTokenValid($user_token)) {
+            $result = array(
+                'status' => 200,
+                'message' => 'User token valid'
+            );
+        } else {
+            $result = array(
+                'status' => 201,
+                'message' => 'Invalid user token'
+            );
+        }
+
+        return $this->respond($result);
+    }
 }
