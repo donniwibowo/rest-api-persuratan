@@ -407,10 +407,44 @@ class Form extends ResourceController
                             'response_by'   => $response_by,
                         ]
                     );
-
+                } else {
                     $response = array(
-                        'status' => 200,
-                        'message' => $response
+                        'status' => 404,
+                        'message' => 'Failed to update'
+                    );
+                }
+               
+            } else {
+                $response = array(
+                    'status' => 201,
+                    'message' => 'No data found'
+                );
+            }
+
+        } else {
+            $response = array(
+                'status' => 201,
+                'message' => 'Invalid user token'
+            );
+        }
+
+        return $this->respond($response);
+   }
+
+   public function deletepermohonan($user_token) {
+        $permohonan_id = $this->request->getVar('permohonan_id');
+        
+        $response = array();
+        if(UserModel::isUserTokenValid($user_token)) {
+            $permohonan_model = new PermohonanModel();
+            $permohonan_data = $permohonan_model->find($permohonan_id);
+
+            if($permohonan_data) {
+                $isUpdated = $permohonan_model->update($permohonan_id, ['is_deleted' => 1]); 
+
+                if($isUpdated) {
+                    $response = array(
+                        'status' => 200
                     );
                 } else {
                     $response = array(

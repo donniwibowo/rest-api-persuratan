@@ -45,6 +45,7 @@ $routes->group("api/form", function ($routes) {
     $routes->get('getpermohonan/(:any)/(:any)', 'Form::getpermohonan/$1/$2');
     $routes->post('updatestatus/(:any)', 'Form::updatestatus/$1');
     $routes->get('getpermohonanforedit/(:any)/(:any)', 'Form::getpermohonanforedit/$1/$2');
+    $routes->post('deletepermohonan/(:any)', 'Form::deletepermohonan/$1');
 });
 
 
