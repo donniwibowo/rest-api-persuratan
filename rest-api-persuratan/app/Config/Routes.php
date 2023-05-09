@@ -44,6 +44,7 @@ $routes->group("api/form", function ($routes) {
     $routes->get('countnotif/(:any)', 'Form::countunreadnotif/$1');
     $routes->get('getpermohonan/(:any)/(:any)', 'Form::getpermohonan/$1/$2');
     $routes->post('updatestatus/(:any)', 'Form::updatestatus/$1');
+    $routes->get('getpermohonanforedit/(:any)/(:any)', 'Form::getpermohonanforedit/$1/$2');
 });
 
 
