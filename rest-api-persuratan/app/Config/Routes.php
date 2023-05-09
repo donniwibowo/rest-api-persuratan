@@ -37,8 +37,10 @@ $routes->group("api/user", function ($routes) {
 });
 
 $routes->group("api/form", function ($routes) {
-    $routes->get('getall/(:any)', 'Form::getallformtype/$1');
-    $routes->get('getpeminjaman/(:any)', 'Form::getalljenispeminjaman/$1');
+    $routes->get('getallform/(:any)', 'Form::getallformtype/$1');
+    $routes->get('getalljenispeminjaman/(:any)', 'Form::getalljenispeminjaman/$1');
+    $routes->get('getallpermohonan/(:any)/(:any)', 'Form::getallpermohonan/$1/$2');
+    $routes->get('getallpermohonan/(:any)', 'Form::getallpermohonan/$1');
 });
 
 
