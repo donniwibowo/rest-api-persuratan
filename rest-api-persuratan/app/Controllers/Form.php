@@ -71,10 +71,7 @@ class Form extends ResourceController
         $response = array();
 
         if(UserModel::isUserTokenValid($user_token)) {
-            $api_login_id = UserModel::decrypt($user_token);
-            $api_login_model = new UserApiLoginModel();
-            $api_login_data = $api_login_model->find($api_login_id);
-            $user_id = $api_login_data['user_id'];
+            $user_id = UserApiLoginModel::getUserID($user_token);
             $permohonan_model = new PermohonanModel();
 
             $where = 'is_deleted = 0';
@@ -154,6 +151,32 @@ class Form extends ResourceController
                     'message' => 'No data found'
                 );
             }
+        } else {
+            $response = array(
+                'status' => 201,
+                'message' => 'Invalid user token'
+            );
+        }
+
+        return $this->respond($response);
+   }
+
+   public function countunreadnotif($user_token) {
+        $response = array();
+
+        if(UserModel::isUserTokenValid($user_token)) {
+            $user_id = UserApiLoginModel::getUserID($user_token);
+            $permohonan_model = new PermohonanModel();
+            $numOfUnreadNotif = $permohonan_model
+                                ->where('is_deleted', 0)
+                                ->where('is_open_for_notif', 0)
+                                ->where('created_by', $user_id)
+                                ->countAll();
+            $response = array(
+                'status' => 200,
+                'data' => $numOfUnreadNotif
+            );
+
         } else {
             $response = array(
                 'status' => 201,

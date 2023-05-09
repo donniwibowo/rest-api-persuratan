@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Models\UserModel;
 
 class UserApiLoginModel extends Model
 {
@@ -18,4 +19,15 @@ class UserApiLoginModel extends Model
 
         return $apiLoginModel->update($api_login_id, $api_data);
     }
+
+    public static function getUserID($user_token) {
+        $api_login_id = UserModel::decrypt($user_token);
+        $api_login_model = new UserApiLoginModel();
+        $api_login_data = $api_login_model->find($api_login_id);
+        if($api_login_data) {
+            return $api_login_data['user_id'];
+        }
+
+        return 0;
+    } 
 }
