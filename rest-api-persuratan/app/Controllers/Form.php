@@ -469,4 +469,33 @@ class Form extends ResourceController
 
         return $this->respond($response);
    }
+
+   public function getpdffilename($user_token, $permohonan_id) {
+        $response = array();
+        if(UserModel::isUserTokenValid($user_token)) {
+            $permohonan_model = new PermohonanModel();
+            $permohonan_data = $permohonan_model->find($permohonan_id);
+
+            if($permohonan_data) {
+                $response = array(
+                    'status' => 200,
+                    'data'  => $permohonan_data['pdf_filename']
+                );
+               
+            } else {
+                $response = array(
+                    'status' => 201,
+                    'message' => 'No data found'
+                );
+            }
+
+        } else {
+            $response = array(
+                'status' => 201,
+                'message' => 'Invalid user token'
+            );
+        }
+
+        return $this->respond($response);
+   }
 }
