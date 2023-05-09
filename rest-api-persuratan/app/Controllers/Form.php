@@ -275,4 +275,75 @@ class Form extends ResourceController
 
         return $this->respond($response);
    }
+
+   public function updatestatus($user_token) {
+        $permohonan_id = $this->request->getVar('permohonan_id');
+        $status = $this->request->getVar('status');
+
+        $response = array();
+
+        if(UserModel::isUserTokenValid($user_token)) {
+            $user_id = UserApiLoginModel::getUserID($user_token);
+            
+            $user_model = new UserModel();
+
+            $permohonan_model = new PermohonanModel();
+            $permohonan_data = $permohonan_model->find($permohonan_id);
+
+            if($permohonan_data) {
+                $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status, 'response_by', $user_id]); 
+
+                if($isUpdated) {
+                    $permohonan_data = $permohonan_model->find($permohonan_id);
+                    
+                    $response_by = '-';
+                    $user_response = $user_model->find($user_id);
+
+                    if($user_response) {
+                        $response_by = $user_response['fullname'];
+                    }
+
+                    $response = array(
+                        'status' => 200,
+                        'data'  => [
+                            'permohonan_id' => $permohonan_data['permohonan_id'],
+                            'status'        => $permohonan_data['status'],
+                            'pdf_filename'  => $permohonan_data['pdf_filename'],
+                            'nrp'   => $permohonan_data['nrp'],
+                            'nama' => $permohonan_data['nama'],
+                            'universitas'   => $permohonan_data['universitas'],
+                            'perihal'       => $permohonan_data['perihal'],
+                            'date_start'    => date('d M Y', strtotime($permohonan_data['date_start'])),
+                            'date_end'      => date('d M Y', strtotime($permohonan_data['date_end'])),
+                            'response_by'   => $response_by,
+                        ]
+                    );
+
+                    $response = array(
+                        'status' => 200,
+                        'message' => $response
+                    );
+                } else {
+                    $response = array(
+                        'status' => 404,
+                        'message' => 'Failed to update'
+                    );
+                }
+               
+            } else {
+                $response = array(
+                    'status' => 201,
+                    'message' => 'No data found'
+                );
+            }
+
+        } else {
+            $response = array(
+                'status' => 201,
+                'message' => 'Invalid user token'
+            );
+        }
+
+        return $this->respond($response);
+   }
 }
