@@ -498,4 +498,78 @@ class Form extends ResourceController
 
         return $this->respond($response);
    }
+
+   public function createpermohonan($user_token) {
+        $response = array();
+        if(UserModel::isUserTokenValid($user_token)) {
+            $user_id = UserApiLoginModel::getUserID($user_token);
+            $permohonan_id = $this->request->getVar('permohonan_id');
+            $form_id = $this->request->getVar('form_id');
+
+            $data = [
+                'form_id' => $form_id,
+                'jenis_peminjaman_id' => $this->request->getVar('jenis_peminjaman_id'),
+                'perihal' => $this->request->getVar('perihal'),
+                'nrp' => $this->request->getVar('nrp'),
+                'nama' => $this->request->getVar('nama'),
+                'universitas' => $this->request->getVar('universitas'),
+                'keterangan' => $this->request->getVar('keterangan'),
+                'date_start' => date('Y-m-d H:i:s', strtotime($this->request->getVar('date_start'))),
+                'date_end' => date('Y-m-d H:i:s', strtotime($this->request->getVar('date_end'))),
+                'status' => $this->request->getVar('status'),
+                'is_open_for_notif' => 0,
+                'alasan' => $this->request->getVar('alasan'),
+                'created_by' => $user_id,
+                'created_on' => date('Y-m-d H:i:s'),
+                'updated_by' => $user_id,
+                'updated_on' => date('Y-m-d H:i:s'),
+                'is_deleted' => 0
+            ];
+
+            $permohonan_model = new PermohonanModel();
+            $form_model = new FormModel();
+            $query_result = 0;
+
+            if($permohonan_id > 0) {
+                // for update
+                $query_result = $permohonan_model->update($data, $permohonan_id);
+            } else {
+                // for create new
+                $query_result = $permohonan_model->insert($data);
+                $permohonan_id = $permohonan_model->insertID;
+            }
+
+            if($query_result) {
+                $permohonan_data = $permohonan_model->find($permohonan_id);
+
+                $form_data = $form_model->find($form_id);
+                $pdf_filename = $permohonan_data['nrp'] . '_' . $permohonan_id . '_' . $form_data['form'] . '.pdf';
+
+                $permohonan_model->update($permohonan_id, ['pdf_filename' => $pdf_filename]);
+                
+                $response = array(
+                    'status' => 200,
+                    'data'  => [
+                        'permohonan_id' => $permohonan_data['permohonan_id'],
+                        'status'        => ucwords(strtolower($permohonan_data['status'])),
+                        'pdf_filename'  => $pdf_filename,
+                        'has_edit_access' => $permohonan_data['created_by'] == $user_id ? "1" : "0",
+                    ]
+                );
+            } else {
+                $response = array(
+                    'status' => 404,
+                    'message' => 'Failed to create/update data'
+                );
+            }
+
+        } else {
+            $response = array(
+                'status' => 201,
+                'message' => 'Invalid user token'
+            );
+        }
+
+        return $this->respond($response);
+   }
 }

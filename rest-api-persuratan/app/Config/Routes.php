@@ -47,6 +47,7 @@ $routes->group("api/form", function ($routes) {
     $routes->get('getpermohonanforedit/(:any)/(:any)', 'Form::getpermohonanforedit/$1/$2');
     $routes->post('deletepermohonan/(:any)', 'Form::deletepermohonan/$1');
     $routes->get('getpdffilename/(:any)/(:any)', 'Form::getpdffilename/$1/$2');
+    $routes->post('createpermohonan/(:any)', 'Form::createpermohonan/$1');
 });
 
 
