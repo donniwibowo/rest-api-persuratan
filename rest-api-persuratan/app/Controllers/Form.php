@@ -295,6 +295,7 @@ class Form extends ResourceController
 
                     $data = array(
                         'permohonan_id' => $permohonan_data['permohonan_id'],
+                        'form_id'          => $form_model['form_id'],
                         'form'          => $form_model['form'],
                         'jenis_peminjaman' => $jenis_peminjaman,
                         'pdf_filename' => $permohonan_data['pdf_filename'],
@@ -532,7 +533,7 @@ class Form extends ResourceController
 
             if($permohonan_id > 0) {
                 // for update
-                $query_result = $permohonan_model->update($data, $permohonan_id);
+                $query_result = $permohonan_model->update($permohonan_id, $data);
             } else {
                 // for create new
                 $query_result = $permohonan_model->insert($data);
