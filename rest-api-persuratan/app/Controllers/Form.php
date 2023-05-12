@@ -369,6 +369,7 @@ class Form extends ResourceController
    public function updatestatus($user_token) {
         $permohonan_id = $this->request->getVar('permohonan_id');
         $status = $this->request->getVar('status');
+        $alasan = $this->request->getVar('alasan');
 
         $response = array();
 
@@ -381,7 +382,7 @@ class Form extends ResourceController
             $permohonan_data = $permohonan_model->find($permohonan_id);
 
             if($permohonan_data) {
-                $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status, 'response_by', $user_id]); 
+                $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status, 'response_by'=> $user_id, 'alasan' => $alasan]); 
 
                 if($isUpdated) {
                     $permohonan_data = $permohonan_model->find($permohonan_id);
@@ -561,6 +562,45 @@ class Form extends ResourceController
                 $response = array(
                     'status' => 404,
                     'message' => 'Failed to create/update data'
+                );
+            }
+
+        } else {
+            $response = array(
+                'status' => 201,
+                'message' => 'Invalid user token'
+            );
+        }
+
+        return $this->respond($response);
+   }
+
+   public function markasread($user_token) {
+        $permohonan_id = $this->request->getVar('permohonan_id');
+        
+        $response = array();
+        if(UserModel::isUserTokenValid($user_token)) {
+            $permohonan_model = new PermohonanModel();
+            $permohonan_data = $permohonan_model->find($permohonan_id);
+
+            if($permohonan_data) {
+                $isUpdated = $permohonan_model->update($permohonan_id, ['is_open_for_notif' => 1]); 
+
+                if($isUpdated) {
+                    $response = array(
+                        'status' => 200
+                    );
+                } else {
+                    $response = array(
+                        'status' => 404,
+                        'message' => 'Failed to update'
+                    );
+                }
+               
+            } else {
+                $response = array(
+                    'status' => 201,
+                    'message' => 'No data found'
                 );
             }
 
