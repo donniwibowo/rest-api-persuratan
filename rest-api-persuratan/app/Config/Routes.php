@@ -49,6 +49,7 @@ $routes->group("api/form", function ($routes) {
     $routes->get('getpdffilename/(:any)/(:any)', 'Form::getpdffilename/$1/$2');
     $routes->post('createpermohonan/(:any)', 'Form::createpermohonan/$1');
     $routes->post('markasread/(:any)', 'Form::markasread/$1');
+    $routes->get('getunreadpermohonan/(:any)', 'Form::getunreadpermohonan/$1');
 });
 
 
