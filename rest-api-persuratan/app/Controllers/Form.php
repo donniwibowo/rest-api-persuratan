@@ -171,6 +171,10 @@ class Form extends ResourceController
             $permohonan_data = $permohonan_model->find($permohonan_id);
 
             if($permohonan_data) {
+                if($permohonan_data['is_open_for_notif'] == 0) {
+                    $permohonan_model->update($permohonan_id, ['is_open_for_notif' => 1]);
+                }
+                    
                 $user_model = new UserModel();
                 $login_user_data = $user_model->find($user_id);
 
@@ -351,11 +355,15 @@ class Form extends ResourceController
 
             if($user_data['is_superadmin'] == 1) {
                 $permohonan_model = new PermohonanModel();
-                $numOfUnreadNotif = $permohonan_model
+                $permohonan_data = $permohonan_model
                                     ->where('is_deleted', 0)
                                     ->where('is_open_for_notif', 0)
                                     // ->where('created_by', $user_id)
-                                    ->countAll();
+                                    ->findAll();
+                if($permohonan_data) {
+                    $numOfUnreadNotif = count($permohonan_data);
+                }
+                
             }
 
             $response = array(
@@ -629,6 +637,7 @@ class Form extends ResourceController
             $permohonan_model = new PermohonanModel();
             $permohonan_data = $permohonan_model->where('is_deleted', 0)
                                                 ->where('is_open_for_notif', 0)
+                                                ->orderBy('created_on', 'DESC')
                                                 ->findAll();
 
             if($permohonan_data) {
