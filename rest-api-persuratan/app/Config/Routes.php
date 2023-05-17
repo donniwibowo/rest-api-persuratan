@@ -42,7 +42,7 @@ $routes->group("api/form", function ($routes) {
     $routes->get('getallpermohonan/(:any)/(:any)', 'Form::getallpermohonan/$1/$2');
     $routes->get('getallpermohonan/(:any)', 'Form::getallpermohonan/$1');
     $routes->get('countnotif/(:any)', 'Form::countunreadnotif/$1');
-    $routes->get('getpermohonan/(:any)/(:any)', 'Form::getpermohonan/$1/$2');
+    $routes->get('getpermohonan/(:any)/(:any)/(:any)', 'Form::getpermohonan/$1/$2/$3');
     $routes->post('updatestatus/(:any)', 'Form::updatestatus/$1');
     $routes->get('getpermohonanforedit/(:any)/(:any)', 'Form::getpermohonanforedit/$1/$2');
     $routes->post('deletepermohonan/(:any)', 'Form::deletepermohonan/$1');
@@ -50,6 +50,7 @@ $routes->group("api/form", function ($routes) {
     $routes->post('createpermohonan/(:any)', 'Form::createpermohonan/$1');
     $routes->post('markasread/(:any)', 'Form::markasread/$1');
     $routes->get('getunreadpermohonan/(:any)', 'Form::getunreadpermohonan/$1');
+    $routes->get('generatepdf/(:any)/(:any)', 'Form::generatepdf/$1/$2');
 });
 
 

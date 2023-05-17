@@ -6,6 +6,7 @@ use App\Models\UserApiLoginModel;
 use App\Models\PermohonanModel;
 use App\Models\FormModel;
 use App\Models\JenisPeminjamanModel;
+use App\ThirdParty\fpdf\FPDF;
 
 class Form extends ResourceController
 {
@@ -161,7 +162,7 @@ class Form extends ResourceController
         return $this->respond($response);
    }
 
-   public function getpermohonan($user_token, $permohonan_id) {
+   public function getpermohonan($user_token, $permohonan_id, $markasread) {
         $response = array();
 
         if(UserModel::isUserTokenValid($user_token)) {
@@ -171,12 +172,12 @@ class Form extends ResourceController
             $permohonan_data = $permohonan_model->find($permohonan_id);
 
             if($permohonan_data) {
-                if($permohonan_data['is_open_for_notif'] == 0) {
-                    $permohonan_model->update($permohonan_id, ['is_open_for_notif' => 1]);
-                }
-                    
                 $user_model = new UserModel();
                 $login_user_data = $user_model->find($user_id);
+
+                if($markasread == "1" || $login_user_data['is_superadmin'] == 1) {
+                    $permohonan_model->update($permohonan_id, ['is_open_for_notif' => 1]);
+                }
 
                 $data = array();
                 
@@ -715,6 +716,144 @@ class Form extends ResourceController
                 'message' => 'Invalid user token'
             );
         }
+
+        return $this->respond($response);
+   }
+
+   public function generatepdf($user_token, $permohonan_id) {
+        $response = array();
+        $filename = 'default.pdf';
+        if(UserModel::isUserTokenValid($user_token)) {
+            $user_model = new UserModel();
+            $permohonan_model = new PermohonanModel();
+            $permohonan_data = $permohonan_model->find($permohonan_id);
+
+            if($permohonan_data) {
+                $form_model = new FormModel();
+                $form_data = $form_model->find($permohonan_data['form_id']);
+
+                $filename = $permohonan_data['nrp'].'_'.$permohonan_data['permohonan_id'].'_'.$form_data['form'].'.pdf';
+
+                $pdf = new FPDF();
+                $pdf->AddPage();
+                // $pdf->SetFont('Arial', 'B', 18);
+                 // Logo
+                $pdf->Image('documents/logo2.png',10,6,40);
+                // Arial bold 15
+                $pdf->SetFont('Arial','B',14);
+                // Move to the right
+                $pdf->Cell(10);
+                // Title
+                $pdf->Cell(200,10,'PT. INTEGRA TEKNOLOGI SOLUSI', 0, 0, 'C');
+                $pdf->Ln(5);
+                $pdf->SetFont('Arial','B',9);
+                $pdf->Cell(10);
+                $pdf->Cell(200,10,'Wisma Medokan Asri, Jl. Medokan Asri Utara XV No.10, Medokan Ayu', 0, 0, 'C');
+                $pdf->Ln(4);
+                $pdf->Cell(10);
+                $pdf->Cell(200,10,'Rungkut, Surabaya City, East Java 60295', 0, 1, 'C');
+                // Line break
+                $pdf->Ln(5);
+                $pdf->Line(10, 30, 210-10, 30); // 20mm from each edge
+                
+                
+                $pdf->SetFont('');
+                $pdf->Cell(15);
+                $pdf->Cell(35, 20, 'NRP');
+                $pdf->Cell(200, 20, $permohonan_data['nrp']);
+
+                $pdf->Ln(5);
+
+                $pdf->Cell(15);
+                $pdf->Cell(35, 20, 'Nama');
+                $pdf->Cell(200, 20, ucwords(strtolower($permohonan_data['nama'])));
+
+                $pdf->Ln(5);
+
+                $pdf->Cell(15);
+                $pdf->Cell(35, 20, 'Universitas');
+                $pdf->Cell(200, 20, strtoupper(strtolower($permohonan_data['universitas'])));
+
+                $pdf->Ln(5);
+
+                $pdf->Cell(15);
+                $pdf->Cell(35, 20, 'Perihal');
+                $pdf->Cell(200, 20, ucwords(strtolower($permohonan_data['perihal'])));
+
+                $pdf->Ln(5);
+
+                $pdf->Cell(15);
+                $pdf->Cell(35, 20, 'Tanggal Mulai');
+                $pdf->Cell(200, 20, date('d M Y', strtotime($permohonan_data['date_start'])));
+
+                $pdf->Ln(5);
+
+                $pdf->Cell(15);
+                $pdf->Cell(35, 20, 'Tanggal Berakhir');
+                $pdf->Cell(200, 20, date('d M Y', strtotime($permohonan_data['date_end'])));
+
+                $pdf->Ln(5);
+
+                $pdf->Cell(15);
+                $pdf->Cell(35, 20, 'Status');
+                $pdf->Cell(200, 20, strtoupper(strtolower($permohonan_data['status'])));
+
+
+                $pdf->Ln(20);
+                $pdf->Cell(5);
+                $pdf->MultiCell(180, 5, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.');
+
+                $response_by = '';
+                if($permohonan_data['response_by'] != '' && $permohonan_data['response_by'] > 0) {
+                    $user_response = $user_model->find($permohonan_data['response_by']);
+
+                    if($user_response) {
+                        $response_by = $user_response['fullname'];
+                    }
+                }
+
+
+                $pdf->Ln(30);
+                $pdf->Cell(150);
+                $pdf->Cell(50, 10, 'Menyetujui');
+
+                $pdf->Ln(10);
+                $pdf->Cell(150);
+                $pdf->Cell(50, 10, strtoupper(strtolower($permohonan_data['status'])));
+
+                $pdf->Ln(10);
+                
+                if($response_by == '') {
+                    $pdf->Cell(145);
+                    $pdf->Cell(50, 10, '(............................)');
+                } else {
+                    $pdf->Cell(145);
+                    $pdf->Cell(50, 10, '('.$response_by.')');
+                }
+                
+
+                $pdf->Output('F', 'documents/'.$filename); 
+                
+                $permohonan_model->update($permohonan_data['permohonan_id'], ['pdf_filename' => $filename]);
+                $response = array(
+                    'status' => 200,
+                    'link' => 'http://192.168.1.66:8080/documents/'.$filename
+                );
+               
+            } else {
+                $response = array(
+                    'status' => 201,
+                    'message' => 'No data found'
+                );
+            }
+
+        } else {
+            $response = array(
+                'status' => 201,
+                'message' => 'Invalid user token'
+            );
+        }
+
 
         return $this->respond($response);
    }
