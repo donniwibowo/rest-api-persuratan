@@ -40,12 +40,14 @@ class Form extends ResourceController
         return $this->respond($response);
    }
 
-   public function getalljenispeminjaman($user_token) {
+   public function getalljenispeminjaman($user_token, $form_id) {
         $response = array();
 
         if(UserModel::isUserTokenValid($user_token)) {
             $jenis_peminjaman_model = new JenisPeminjamanModel();
-            $jenis_peminjaman_data = $jenis_peminjaman_model->where('is_deleted', 0)->findAll();
+            $jenis_peminjaman_data = $jenis_peminjaman_model->where('is_deleted', 0)
+                                                            ->where('form_id', $form_id)
+                                                            ->findAll();
 
             if($jenis_peminjaman_data) {
                 $response = array(
@@ -54,8 +56,8 @@ class Form extends ResourceController
                 );
             } else {
                 $response = array(
-                    'status' => 404,
-                    'message' => 'No data found'
+                    'status' => 200,
+                    'data' => null
                 );    
             }
         } else {
@@ -77,10 +79,12 @@ class Form extends ResourceController
 
             $where = 'is_deleted = 0';
             if($keyword != '') {
-                $where = 'is_deleted = 0 AND (perihal LIKE "%'.$keyword.'%" OR nrp LIKE "%'.$keyword.'%" OR nama LIKE "%'.$keyword.'%" OR universitas LIKE "%'.$keyword.'%" OR status LIKE "%'.$keyword.'%") ORDER BY updated_on DESC';
+                $where = 'is_deleted = 0 AND (perihal LIKE "%'.$keyword.'%" OR nrp LIKE "%'.$keyword.'%" OR nama LIKE "%'.$keyword.'%" OR universitas LIKE "%'.$keyword.'%" OR status LIKE "%'.$keyword.'%")';
             }
             
-            $permohonan_data = $permohonan_model->where($where)->findAll();
+            $permohonan_data = $permohonan_model->where($where)
+                                                ->orderBy('updated_on', 'DESC')
+                                                ->findAll();
 
             if($permohonan_data) {
                 $user_model = new UserModel();
@@ -797,6 +801,12 @@ class Form extends ResourceController
                 $pdf->Cell(15);
                 $pdf->Cell(35, 20, 'Status');
                 $pdf->Cell(200, 20, strtoupper(strtolower($permohonan_data['status'])));
+
+                $pdf->Ln(5);
+
+                $pdf->Cell(15);
+                $pdf->Cell(35, 20, 'Keterangan');
+                $pdf->Cell(200, 20, $permohonan_data['keterangan']);
 
 
                 $pdf->Ln(20);
