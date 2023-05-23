@@ -136,6 +136,7 @@ class Form extends ResourceController
                             'is_open_for_notif'     => $permohonan['is_open_for_notif'],
                             'response_by'   => $response_by,
                             'alasan'        => $permohonan['alasan'],
+                            'lampiran'        => $permohonan['lampiran'],
                             'created_on'    => date('d M Y', strtotime($permohonan['created_on'])),
                             'created_by'    => $user_create['fullname'],
                             'updated_on'    => date('d M Y', strtotime($permohonan['updated_on'])),
@@ -229,6 +230,7 @@ class Form extends ResourceController
                         'is_open_for_notif'     => $permohonan_data['is_open_for_notif'],
                         'response_by'   => $response_by,
                         'alasan'        => $permohonan_data['alasan'],
+                        'lampiran'        => $permohonan_data['lampiran'],
                         'created_on'    => date('d M Y', strtotime($permohonan_data['created_on'])),
                         'created_by'    => $user_create['fullname'],
                         'updated_on'    => date('d M Y', strtotime($permohonan_data['updated_on'])),
@@ -319,6 +321,7 @@ class Form extends ResourceController
                         'is_open_for_notif'     => $permohonan_data['is_open_for_notif'],
                         'response_by'   => $response_by,
                         'alasan'        => $permohonan_data['alasan'],
+                        'lampiran'        => $permohonan_data['lampiran'],
                         'created_on'    => date('d M Y', strtotime($permohonan_data['created_on'])),
                         'created_by'    => $user_create['fullname'],
                         'updated_on'    => date('d M Y', strtotime($permohonan_data['updated_on'])),
@@ -402,7 +405,13 @@ class Form extends ResourceController
             $permohonan_data = $permohonan_model->find($permohonan_id);
 
             if($permohonan_data) {
-                $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status, 'response_by'=> $user_id, 'alasan' => $alasan]); 
+                $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status, 'response_by'=> $user_id, 'alasan' => $alasan]);
+                // if($strtolower($status) == 'pending') {
+                //     $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status]); 
+                // } else {
+                //     $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status, 'response_by'=> $user_id, 'alasan' => $alasan]); 
+                // }
+                
 
                 if($isUpdated) {
                     $permohonan_data = $permohonan_model->find($permohonan_id);
@@ -568,6 +577,19 @@ class Form extends ResourceController
                 $pdf_filename = $permohonan_data['nrp'] . '_' . $permohonan_id . '_' . $form_data['form'] . '.pdf';
 
                 $permohonan_model->update($permohonan_id, ['pdf_filename' => $pdf_filename]);
+
+                if(isset($_FILES['file']['tmp_name'])) {
+                    $tempFile = $_FILES['file']['tmp_name'];
+
+                    $temp = explode(".", $_FILES["file"]["name"]);
+                    $newfilename = round(microtime(true)) . '.' . end($temp);
+
+                    $targetPath = 'documents/';
+                    $targetFile =  $targetPath. $newfilename;
+                    if(move_uploaded_file($tempFile,$targetFile)) {
+                        $permohonan_model->update($permohonan_id, ['lampiran' => $newfilename]);  
+                    }
+                }
                 
                 $response = array(
                     'status' => 200,
@@ -694,6 +716,7 @@ class Form extends ResourceController
                             'is_open_for_notif'     => $permohonan['is_open_for_notif'],
                             'response_by'   => $response_by,
                             'alasan'        => $permohonan['alasan'],
+                            'lampiran'        => $permohonan['lampiran'],
                             'created_on'    => date('d M Y', strtotime($permohonan['created_on'])),
                             'created_by'    => $user_create['fullname'],
                             'updated_on'    => date('d M Y', strtotime($permohonan['updated_on'])),
@@ -829,15 +852,29 @@ class Form extends ResourceController
 
                 $pdf->Ln(10);
                 $pdf->Cell(150);
-                $pdf->Cell(50, 10, strtoupper(strtolower($permohonan_data['status'])));
 
-                $pdf->Ln(10);
+                // $pdf->Cell(50, 10, strtoupper(strtolower($permohonan_data['status'])));
+                if(strtolower($permohonan_data['status']) == 'approved') {
+                    $pdf->Image('documents/ttd.jpg',150,142,40);
+                }
+                
+
+                $pdf->Ln(20);
                 
                 if($response_by == '') {
                     $pdf->Cell(145);
                     $pdf->Cell(50, 10, '(............................)');
                 } else {
-                    $pdf->Cell(145);
+                    // $response_by = 'Jason Immanuel, S. Kom, M. Kom';
+                    $len = strlen($response_by);
+                    $space = 145;
+                    if($len < 14) {
+                        $space = $space + (14 - $len - 1);
+                    } elseif($len > 15) {
+                        $space = $space - ($len - 16);
+                    }
+
+                    $pdf->Cell($space);
                     $pdf->Cell(50, 10, '('.$response_by.')');
                 }
                 
