@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 07, 2023 at 02:16 PM
+-- Generation Time: May 25, 2023 at 06:14 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -169,7 +169,12 @@ CREATE TABLE `tbl_form` (
 INSERT INTO `tbl_form` (`form_id`, `form`, `created_on`, `created_by`, `updated_on`, `updated_by`, `is_deleted`) VALUES
 (1, 'Sakit', '2023-04-27 09:30:54', 1, '2023-04-27 09:30:54', 1, 0),
 (2, 'Peminjaman', '2023-04-27 09:31:54', 1, '2023-04-27 09:31:54', 1, 0),
-(3, 'Izin', '2023-04-27 09:32:54', 1, '2023-04-27 09:32:54', 1, 0);
+(3, 'Izin', '2023-04-27 09:32:54', 1, '2023-04-27 09:32:54', 1, 0),
+(4, 'Pengajuan e-KTP', '2023-05-18 12:28:41', 1, '2023-05-18 12:43:00', 1, 0),
+(5, 'Pengajuan Passport', '2023-05-18 13:14:09', 1, '2023-05-18 13:14:09', 1, 0),
+(6, 'Pengajuan Dosen Pembimbing', '2023-05-18 13:18:36', 1, '2023-05-18 13:20:46', 1, 0),
+(7, 'Permohonan Leap', '2023-05-18 13:18:59', 1, '2023-05-18 13:18:59', 1, 0),
+(8, 'Harga Catering', '2023-05-18 13:22:37', 1, '2023-05-18 13:49:26', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -179,6 +184,7 @@ INSERT INTO `tbl_form` (`form_id`, `form`, `created_on`, `created_by`, `updated_
 
 CREATE TABLE `tbl_jenis_peminjaman` (
   `jenis_peminjaman_id` int(11) NOT NULL,
+  `form_id` int(11) NOT NULL,
   `jenis_peminjaman` varchar(255) DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
@@ -191,10 +197,19 @@ CREATE TABLE `tbl_jenis_peminjaman` (
 -- Dumping data for table `tbl_jenis_peminjaman`
 --
 
-INSERT INTO `tbl_jenis_peminjaman` (`jenis_peminjaman_id`, `jenis_peminjaman`, `created_on`, `created_by`, `updated_on`, `updated_by`, `is_deleted`) VALUES
-(1, 'Office365', '2023-04-27 09:30:54', 1, '2023-04-27 09:30:54', 1, 0),
-(2, 'Ruangan', '2023-04-27 09:31:54', 1, '2023-04-27 09:31:54', 1, 0),
-(3, 'Proyektor', '2023-04-27 09:32:54', 1, '2023-04-27 09:32:54', 1, 0);
+INSERT INTO `tbl_jenis_peminjaman` (`jenis_peminjaman_id`, `form_id`, `jenis_peminjaman`, `created_on`, `created_by`, `updated_on`, `updated_by`, `is_deleted`) VALUES
+(1, 2, 'Office365', '2023-04-27 09:30:54', 1, '2023-04-27 09:30:54', 1, 0),
+(2, 2, 'Ruangan', '2023-04-27 09:31:54', 1, '2023-04-27 09:31:54', 1, 0),
+(3, 2, 'Proyektor', '2023-04-27 09:32:54', 1, '2023-04-27 09:32:54', 1, 0),
+(4, 5, 'E-Passport', '2023-05-18 13:14:09', 1, '2023-05-18 13:14:09', 1, 0),
+(5, 5, 'Reguler Passport', '2023-05-18 13:14:10', 1, '2023-05-18 13:14:10', 1, 0),
+(6, 8, 'Makan siang', '2023-05-18 13:22:37', 1, '2023-05-18 13:22:37', 1, 1),
+(7, 8, 'Makan malam', '2023-05-18 13:22:37', 1, '2023-05-18 13:22:37', 1, 1),
+(8, 8, 'makan pagi', '2023-05-18 13:22:37', 1, '2023-05-18 13:22:37', 1, 1),
+(9, 8, 'Bubur bayi', '2023-05-18 13:33:49', 1, '2023-05-18 13:33:49', 1, 1),
+(10, 8, 'buah', '2023-05-18 13:34:11', 1, '2023-05-18 13:34:11', 1, 1),
+(11, 8, 'Makan siang', '2023-05-18 13:49:26', 1, '2023-05-18 13:49:26', 1, 0),
+(12, 8, 'Makan malam', '2023-05-18 13:49:26', 1, '2023-05-18 13:49:26', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -482,7 +497,15 @@ INSERT INTO `tbl_logs` (`logs_id`, `file_target_id`, `act`, `type`, `description
 (260, 86, 'update', 'folder', 'mengubah attribut pada folder DMS Surel', '2023-04-28 14:20:05', 1, '2023-04-28 14:20:05', 1, 0),
 (261, 87, 'upload', 'file', 'mengunggah file baru EF_TestResult-3.pdf', '2023-04-28 14:20:37', 1, '2023-04-28 14:20:37', 1, 0),
 (262, 86, 'open', 'folder', 'membuka folder DMS Surel', '2023-04-28 14:20:38', 1, '2023-04-28 14:20:38', 1, 0),
-(263, 87, 'delete', 'file', 'menghapus file EF_TestResult-3.pdf', '2023-04-28 14:21:11', 1, '2023-04-28 14:21:11', 1, 0);
+(263, 87, 'delete', 'file', 'menghapus file EF_TestResult-3.pdf', '2023-04-28 14:21:11', 1, '2023-04-28 14:21:11', 1, 0),
+(264, 18, 'open', 'folder', 'membuka folder B. Indonesia', '2023-05-22 10:06:57', 2, '2023-05-22 10:06:57', 2, 0),
+(265, 18, 'open', 'folder', 'membuka folder B. Indonesia', '2023-05-22 15:52:44', 2, '2023-05-22 15:52:44', 2, 0),
+(266, 40, 'open', 'folder', 'membuka folder PKN', '2023-05-22 15:55:04', 2, '2023-05-22 15:55:04', 2, 0),
+(267, 18, 'open', 'folder', 'membuka folder B. Indonesia', '2023-05-22 16:10:44', 2, '2023-05-22 16:10:44', 2, 0),
+(268, 4, 'open', 'folder', 'membuka folder Project Android - POS', '2023-05-22 16:11:12', 1, '2023-05-22 16:11:12', 1, 0),
+(269, 18, 'open', 'folder', 'membuka folder B. Indonesia', '2023-05-22 16:13:25', 2, '2023-05-22 16:13:25', 2, 0),
+(270, 4, 'open', 'folder', 'membuka folder Project Android - POS', '2023-05-22 16:24:34', 1, '2023-05-22 16:24:34', 1, 0),
+(271, 4, 'open', 'folder', 'membuka folder Project Android - POS', '2023-05-22 16:34:29', 1, '2023-05-22 16:34:29', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -506,21 +529,13 @@ CREATE TABLE `tbl_permohonan` (
   `is_open_for_notif` int(1) DEFAULT NULL,
   `response_by` int(11) DEFAULT NULL,
   `alasan` varchar(255) DEFAULT NULL,
+  `lampiran` varchar(255) DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `updated_on` datetime DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT 0 COMMENT '0=No; 1=Yes'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
---
--- Dumping data for table `tbl_permohonan`
---
-
-INSERT INTO `tbl_permohonan` (`permohonan_id`, `form_id`, `jenis_peminjaman_id`, `pdf_filename`, `perihal`, `nrp`, `nama`, `universitas`, `keterangan`, `date_start`, `date_end`, `status`, `is_open_for_notif`, `response_by`, `alasan`, `created_on`, `created_by`, `updated_on`, `updated_by`, `is_deleted`) VALUES
-(1, 2, 1, 'C14190074_1_Peminjaman.pdf', 'Peminjaman Ruangan Ultramen', 'C14190074', 'One User', 'Ubaya', 'Pinjam Ruangan Ultramen untuk baking demo', '2023-05-17 00:00:00', '2023-05-19 00:00:00', 'approved', 0, 1, '', '2023-05-06 12:39:35', 5, '2023-05-06 13:14:30', 5, 0),
-(2, 3, 0, 'c14190074_2_Izin.pdf', 'Seminar TA', 'c14190074', 'Agung', 'UK Petra', 'Izin untuk ikut seminar TA', '2023-05-18 00:00:00', '2023-05-19 00:00:00', 'rejected', 0, 1, '', '2023-05-06 13:19:21', 5, '2023-05-06 13:20:18', 5, 0),
-(3, 2, 1, 'C14190074_3_Peminjaman.pdf', 'Pinjam Ms Word', 'C14190074', 'Agung', 'UK Petra', 'Mau but petisi', '2023-05-13 00:00:00', '2023-05-21 00:00:00', 'approved', 0, 1, '', '2023-05-06 13:22:27', 5, '2023-05-06 13:23:30', 5, 0);
 
 -- --------------------------------------------------------
 
@@ -555,7 +570,7 @@ CREATE TABLE `tbl_user` (
 
 INSERT INTO `tbl_user` (`user_id`, `is_superadmin`, `fullname`, `email`, `password`, `phone`, `address`, `position`, `status`, `status_email`, `secret_key`, `encryption_key`, `encryption_iv`, `created_on`, `created_by`, `updated_on`, `updated_by`, `is_deleted`) VALUES
 (1, 1, 'Jason Immanuel', 'jason@email.com', 'tsG26M+doZc=', '081356894563', NULL, NULL, 1, 1, NULL, '6143541754438333', 'MXLPR1SYD935TJVF', '2023-01-25 06:37:26', 1, '2023-01-25 06:37:26', 1, 0),
-(2, 0, 'Delvo Anderson', 'delvo@email.com', 'urrnRO/83iY=', '456789874565', NULL, NULL, 1, 1, NULL, '9378434021479912', '8MD2RPBW91SZNXI7', '2023-01-25 12:39:43', 3, '2023-01-25 12:39:43', 3, 0),
+(2, 1, 'Delvo Anderson', 'delvo@email.com', 'urrnRO/83iY=', '456789874565', NULL, NULL, 1, 1, NULL, '9378434021479912', '8MD2RPBW91SZNXI7', '2023-01-25 12:39:43', 3, '2023-01-25 12:39:43', 3, 0),
 (3, 0, 'jonas andreas', 'jonas@email.com', 'yYROW/X4cLI=', '081358126547', NULL, NULL, 1, 1, NULL, '3783289032730952', 'CNY0GMIWE6DUK4FR', '2023-01-25 12:40:25', 3, '2023-02-06 11:28:03', 3, 0),
 (4, 0, 'Kevin', 'kevin@email.com', 'hhnajCW4FFI=', '5465465', NULL, NULL, 1, 1, NULL, '7122781872373108', 'YZTI658FBMCNSH21', '2023-02-14 10:03:30', 1, '2023-02-14 10:03:30', 1, 0),
 (5, 0, 'One User', 'oneuser@email.com', 'Vzof8R3En4I=', '123456789123', NULL, NULL, 1, 0, NULL, '5411988822775768', 'XTQAG09ZCBDIWRM4', '2023-04-26 12:55:21', 1, '2023-04-26 12:55:21', 1, 0);
@@ -601,7 +616,7 @@ INSERT INTO `tbl_user_api_login` (`api_login_id`, `user_id`, `clock_in`, `clock_
 (21, 5, '2023-04-27 13:39:24', '2023-05-01 09:49:25'),
 (22, 1, '2023-04-28 13:55:35', '2023-04-28 14:40:43'),
 (23, 1, '2023-04-28 14:40:43', '2023-05-01 09:50:37'),
-(24, 2, '2023-04-30 11:41:22', NULL),
+(24, 2, '2023-04-30 11:41:22', '2023-05-08 07:51:27'),
 (25, 5, '2023-05-01 09:49:25', '2023-05-04 10:10:38'),
 (26, 1, '2023-05-01 09:50:37', '2023-05-02 15:24:54'),
 (27, 1, '2023-05-02 15:24:54', '2023-05-02 15:54:33'),
@@ -619,7 +634,7 @@ INSERT INTO `tbl_user_api_login` (`api_login_id`, `user_id`, `clock_in`, `clock_
 (39, 5, '2023-05-04 11:16:58', '2023-05-05 13:18:54'),
 (40, 1, '2023-05-04 12:58:23', '2023-05-05 13:19:45'),
 (41, 5, '2023-05-05 13:18:54', '2023-05-06 11:38:32'),
-(42, 4, '2023-05-05 13:19:18', NULL),
+(42, 4, '2023-05-05 13:19:18', '2023-05-19 02:08:33'),
 (43, 1, '2023-05-05 13:19:45', '2023-05-05 13:21:05'),
 (44, 1, '2023-05-05 13:21:06', '2023-05-05 13:21:46'),
 (45, 1, '2023-05-05 13:21:47', '2023-05-05 13:23:25'),
@@ -644,12 +659,62 @@ INSERT INTO `tbl_user_api_login` (`api_login_id`, `user_id`, `clock_in`, `clock_
 (64, 5, '2023-05-06 13:20:53', '2023-05-06 13:21:39'),
 (65, 5, '2023-05-06 13:21:40', '2023-05-06 13:24:34'),
 (66, 1, '2023-05-06 13:23:21', '2023-05-07 13:12:07'),
-(67, 5, '2023-05-06 13:24:34', NULL),
+(67, 5, '2023-05-06 13:24:34', '2023-05-09 03:29:59'),
 (68, 1, '2023-05-07 06:10:31', '2023-05-07 13:12:18'),
 (69, 1, '2023-05-07 06:11:55', '2023-05-07 06:16:07'),
 (70, 1, '2023-05-07 06:16:07', '2023-05-07 06:17:42'),
 (71, 1, '2023-05-07 06:17:42', '2023-05-07 06:18:59'),
-(72, 1, '2023-05-07 06:18:59', NULL);
+(72, 1, '2023-05-07 06:18:59', '2023-05-10 04:55:59'),
+(73, 2, '2023-05-08 07:51:27', '2023-05-08 08:15:34'),
+(74, 2, '2023-05-08 08:22:48', '2023-05-08 08:22:53'),
+(75, 2, '2023-05-08 08:52:09', '2023-05-10 04:37:09'),
+(76, 5, '2023-05-09 03:29:59', '2023-05-10 04:31:59'),
+(77, 5, '2023-05-10 04:31:59', '2023-05-10 04:33:17'),
+(78, 5, '2023-05-10 04:33:17', '2023-05-10 04:56:13'),
+(79, 2, '2023-05-10 04:37:09', '2023-05-12 03:24:36'),
+(80, 1, '2023-05-10 04:55:59', '2023-05-10 04:56:42'),
+(81, 5, '2023-05-10 04:56:13', '2023-05-10 09:09:29'),
+(82, 1, '2023-05-10 04:56:42', '2023-05-10 09:35:04'),
+(83, 5, '2023-05-10 09:09:29', '2023-05-12 03:24:23'),
+(84, 1, '2023-05-10 09:35:04', '2023-05-12 03:18:39'),
+(85, 1, '2023-05-12 03:18:39', '2023-05-12 03:33:44'),
+(86, 5, '2023-05-12 03:24:23', '2023-05-12 03:57:11'),
+(87, 2, '2023-05-12 03:24:36', '2023-05-12 03:25:06'),
+(88, 2, '2023-05-12 03:25:06', '2023-05-12 03:39:55'),
+(89, 1, '2023-05-12 03:33:44', '2023-05-16 04:09:09'),
+(90, 2, '2023-05-12 03:39:55', '2023-05-12 04:05:11'),
+(91, 5, '2023-05-12 03:57:11', '2023-05-16 04:08:41'),
+(92, 2, '2023-05-12 04:05:11', '2023-05-16 04:37:03'),
+(93, 5, '2023-05-16 04:08:41', '2023-05-18 06:51:46'),
+(94, 1, '2023-05-16 04:09:09', '2023-05-17 03:46:39'),
+(95, 2, '2023-05-16 04:37:03', '2023-05-17 03:14:28'),
+(96, 2, '2023-05-17 03:14:28', '2023-05-19 02:09:02'),
+(97, 1, '2023-05-17 03:46:39', '2023-05-17 03:46:39'),
+(98, 1, '2023-05-17 03:46:39', '2023-05-17 03:47:06'),
+(99, 1, '2023-05-17 03:47:06', '2023-05-18 07:09:04'),
+(100, 5, '2023-05-18 06:51:46', '2023-05-20 03:03:10'),
+(101, 1, '2023-05-18 07:09:04', '2023-05-18 07:20:32'),
+(102, 1, '2023-05-18 07:20:32', '2023-05-20 03:15:48'),
+(103, 4, '2023-05-19 02:08:33', '2023-05-19 02:09:37'),
+(104, 2, '2023-05-19 02:09:02', '2023-05-22 10:06:55'),
+(105, 4, '2023-05-19 02:09:37', NULL),
+(106, 5, '2023-05-20 03:03:10', '2023-05-22 02:00:01'),
+(107, 1, '2023-05-20 03:15:48', '2023-05-22 02:20:55'),
+(108, 5, '2023-05-22 02:00:01', '2023-05-22 09:42:12'),
+(109, 1, '2023-05-22 02:20:55', '2023-05-22 16:34:06'),
+(110, 2, '2023-05-22 10:06:55', '2023-05-23 03:45:58'),
+(111, 1, '2023-05-22 16:34:06', '2023-05-22 09:58:22'),
+(112, 5, '2023-05-22 09:42:12', '2023-05-23 03:17:21'),
+(113, 1, '2023-05-22 09:58:22', '2023-05-24 07:10:12'),
+(114, 5, '2023-05-23 03:17:21', '2023-05-24 08:19:44'),
+(115, 2, '2023-05-23 03:45:58', NULL),
+(116, 3, '2023-05-23 04:08:43', '2023-05-24 06:39:52'),
+(117, 3, '2023-05-24 06:39:52', '2023-05-24 06:56:54'),
+(118, 3, '2023-05-24 06:56:54', '2023-05-25 04:12:07'),
+(119, 1, '2023-05-24 07:10:12', '2023-05-24 07:11:26'),
+(120, 1, '2023-05-24 07:11:26', NULL),
+(121, 5, '2023-05-24 08:19:44', NULL),
+(122, 3, '2023-05-25 04:12:07', NULL);
 
 --
 -- Indexes for dumped tables
@@ -711,25 +776,25 @@ ALTER TABLE `tbl_folder`
 -- AUTO_INCREMENT for table `tbl_form`
 --
 ALTER TABLE `tbl_form`
-  MODIFY `form_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `form_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `tbl_jenis_peminjaman`
 --
 ALTER TABLE `tbl_jenis_peminjaman`
-  MODIFY `jenis_peminjaman_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `jenis_peminjaman_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `tbl_logs`
 --
 ALTER TABLE `tbl_logs`
-  MODIFY `logs_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=264;
+  MODIFY `logs_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=272;
 
 --
 -- AUTO_INCREMENT for table `tbl_permohonan`
 --
 ALTER TABLE `tbl_permohonan`
-  MODIFY `permohonan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `permohonan_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tbl_user`
@@ -741,7 +806,7 @@ ALTER TABLE `tbl_user`
 -- AUTO_INCREMENT for table `tbl_user_api_login`
 --
 ALTER TABLE `tbl_user_api_login`
-  MODIFY `api_login_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `api_login_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

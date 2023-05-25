@@ -136,7 +136,7 @@ class Form extends ResourceController
                             'is_open_for_notif'     => $permohonan['is_open_for_notif'],
                             'response_by'   => $response_by,
                             'alasan'        => $permohonan['alasan'],
-                            'lampiran'        => $permohonan['lampiran'],
+                            'lampiran'        => $permohonan['lampiran'] == null || $permohonan['lampiran'] == '' ? '-' : $permohonan['lampiran'],
                             'created_on'    => date('d M Y', strtotime($permohonan['created_on'])),
                             'created_by'    => $user_create['fullname'],
                             'updated_on'    => date('d M Y', strtotime($permohonan['updated_on'])),
@@ -154,7 +154,7 @@ class Form extends ResourceController
             } else {
                 $response = array(
                     'status' => 404,
-                    'message' => 'No data found'
+                    'data' => array()
                 );
             }
         } else {
@@ -230,7 +230,7 @@ class Form extends ResourceController
                         'is_open_for_notif'     => $permohonan_data['is_open_for_notif'],
                         'response_by'   => $response_by,
                         'alasan'        => $permohonan_data['alasan'],
-                        'lampiran'        => $permohonan_data['lampiran'],
+                        'lampiran'        => $permohonan_data['lampiran'] == null || $permohonan_data['lampiran'] == '' ? '-' : $permohonan_data['lampiran'],
                         'created_on'    => date('d M Y', strtotime($permohonan_data['created_on'])),
                         'created_by'    => $user_create['fullname'],
                         'updated_on'    => date('d M Y', strtotime($permohonan_data['updated_on'])),
@@ -321,7 +321,7 @@ class Form extends ResourceController
                         'is_open_for_notif'     => $permohonan_data['is_open_for_notif'],
                         'response_by'   => $response_by,
                         'alasan'        => $permohonan_data['alasan'],
-                        'lampiran'        => $permohonan_data['lampiran'],
+                        'lampiran'        => $permohonan_data['lampiran'] == null || $permohonan_data['lampiran'] == '' ? '-' : $permohonan_data['lampiran'],
                         'created_on'    => date('d M Y', strtotime($permohonan_data['created_on'])),
                         'created_by'    => $user_create['fullname'],
                         'updated_on'    => date('d M Y', strtotime($permohonan_data['updated_on'])),
@@ -366,6 +366,7 @@ class Form extends ResourceController
                 $permohonan_data = $permohonan_model
                                     ->where('is_deleted', 0)
                                     ->where('is_open_for_notif', 0)
+                                    ->where('status', 'pending')
                                     // ->where('created_by', $user_id)
                                     ->findAll();
                 if($permohonan_data) {
@@ -664,6 +665,7 @@ class Form extends ResourceController
             $permohonan_model = new PermohonanModel();
             $permohonan_data = $permohonan_model->where('is_deleted', 0)
                                                 ->where('is_open_for_notif', 0)
+                                                ->where('status', 'pending')
                                                 ->orderBy('created_on', 'DESC')
                                                 ->findAll();
 
@@ -716,7 +718,7 @@ class Form extends ResourceController
                             'is_open_for_notif'     => $permohonan['is_open_for_notif'],
                             'response_by'   => $response_by,
                             'alasan'        => $permohonan['alasan'],
-                            'lampiran'        => $permohonan['lampiran'],
+                            'lampiran'        => $permohonan['lampiran'] == null || $permohonan['lampiran'] == '' ? '-' : $permohonan['lampiran'],
                             'created_on'    => date('d M Y', strtotime($permohonan['created_on'])),
                             'created_by'    => $user_create['fullname'],
                             'updated_on'    => date('d M Y', strtotime($permohonan['updated_on'])),
@@ -783,53 +785,59 @@ class Form extends ResourceController
                 $pdf->Ln(5);
                 $pdf->Line(10, 30, 210-10, 30); // 20mm from each edge
                 
-                
+
+                $pdf->SetFont('Arial','B',14);
+                $pdf->Cell(200,10,strtoupper($permohonan_data['perihal']), 0, 0, 'C');
+
+                $pdf->SetFont('Arial','B',9);
+                $pdf->Ln(10);
+
                 $pdf->SetFont('');
                 $pdf->Cell(15);
                 $pdf->Cell(35, 20, 'NRP');
-                $pdf->Cell(200, 20, $permohonan_data['nrp']);
+                $pdf->Cell(200, 20, ': '.$permohonan_data['nrp']);
 
                 $pdf->Ln(5);
 
                 $pdf->Cell(15);
                 $pdf->Cell(35, 20, 'Nama');
-                $pdf->Cell(200, 20, ucwords(strtolower($permohonan_data['nama'])));
+                $pdf->Cell(200, 20, ucwords(strtolower(': '.$permohonan_data['nama'])));
 
                 $pdf->Ln(5);
 
                 $pdf->Cell(15);
                 $pdf->Cell(35, 20, 'Universitas');
-                $pdf->Cell(200, 20, strtoupper(strtolower($permohonan_data['universitas'])));
+                $pdf->Cell(200, 20, strtoupper(strtolower(': '.$permohonan_data['universitas'])));
 
                 $pdf->Ln(5);
 
                 $pdf->Cell(15);
                 $pdf->Cell(35, 20, 'Perihal');
-                $pdf->Cell(200, 20, ucwords(strtolower($permohonan_data['perihal'])));
+                $pdf->Cell(200, 20, ucwords(strtolower(': '.$permohonan_data['perihal'])));
 
                 $pdf->Ln(5);
 
                 $pdf->Cell(15);
                 $pdf->Cell(35, 20, 'Tanggal Mulai');
-                $pdf->Cell(200, 20, date('d M Y', strtotime($permohonan_data['date_start'])));
+                $pdf->Cell(200, 20, ': '.date('d M Y', strtotime($permohonan_data['date_start'])));
 
                 $pdf->Ln(5);
 
                 $pdf->Cell(15);
                 $pdf->Cell(35, 20, 'Tanggal Berakhir');
-                $pdf->Cell(200, 20, date('d M Y', strtotime($permohonan_data['date_end'])));
+                $pdf->Cell(200, 20, ': '.date('d M Y', strtotime($permohonan_data['date_end'])));
 
                 $pdf->Ln(5);
 
                 $pdf->Cell(15);
                 $pdf->Cell(35, 20, 'Status');
-                $pdf->Cell(200, 20, strtoupper(strtolower($permohonan_data['status'])));
+                $pdf->Cell(200, 20, strtoupper(strtolower(': '.$permohonan_data['status'])));
 
                 $pdf->Ln(5);
 
                 $pdf->Cell(15);
                 $pdf->Cell(35, 20, 'Keterangan');
-                $pdf->Cell(200, 20, $permohonan_data['keterangan']);
+                $pdf->Cell(200, 20, ': '.$permohonan_data['keterangan']);
 
 
                 $pdf->Ln(20);
