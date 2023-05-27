@@ -406,12 +406,12 @@ class Form extends ResourceController
             $permohonan_data = $permohonan_model->find($permohonan_id);
 
             if($permohonan_data) {
-                $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status, 'response_by'=> $user_id, 'alasan' => $alasan]);
-                // if($strtolower($status) == 'pending') {
-                //     $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status]); 
-                // } else {
-                //     $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status, 'response_by'=> $user_id, 'alasan' => $alasan]); 
-                // }
+                // $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status, 'response_by'=> $user_id, 'alasan' => $alasan]);
+                if(strtolower($status) == 'pending') {
+                    $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status]); 
+                } else {
+                    $isUpdated = $permohonan_model->update($permohonan_id, ['status' => $status, 'response_by'=> $user_id, 'alasan' => $alasan]); 
+                }
                 
 
                 if($isUpdated) {
@@ -449,7 +449,7 @@ class Form extends ResourceController
             } else {
                 $response = array(
                     'status' => 201,
-                    'message' => 'No data found'
+                    'data' => []
                 );
             }
 
@@ -863,7 +863,9 @@ class Form extends ResourceController
 
                 // $pdf->Cell(50, 10, strtoupper(strtolower($permohonan_data['status'])));
                 if(strtolower($permohonan_data['status']) == 'approved') {
-                    $pdf->Image('documents/ttd.jpg',150,152,40);
+                    $pdf->Image('documents/ttd.png',150,152,40);
+                } else if(strtolower($permohonan_data['status']) == 'rejected') {
+                    $pdf->Image('documents/rejected-stamp.png',150,152,40);
                 }
                 
 
@@ -883,7 +885,7 @@ class Form extends ResourceController
                     }
 
                     $pdf->Cell($space);
-                    $pdf->Cell(50, 10, '('.$response_by.')');
+                    $pdf->Cell(50, 10, '('.strtoupper(strtolower($response_by)).')');
                 }
                 
 
