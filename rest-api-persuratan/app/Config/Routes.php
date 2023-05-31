@@ -12,7 +12,7 @@ $routes = Services::routes();
  */
 $routes->setDefaultNamespace('App\Controllers');
 $routes->setDefaultController('Home');
-$routes->setDefaultMethod('index');
+$routes->setDefaultMethod('test');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
 // The Auto Routing (Legacy) is very dangerous. It is easy to create vulnerable apps
@@ -30,7 +30,9 @@ $routes->set404Override();
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
+$routes->get('home', 'Home::test');
 $routes->group("api/user", function ($routes) {
+    $routes->get('index', 'User::index');
     $routes->post('login', 'User::login');
     $routes->post('logout', 'User::logout');
     // $routes->post('test-post/(:any)/(:any)', 'Employee::testpost/$1/$2');
@@ -39,6 +41,7 @@ $routes->group("api/user", function ($routes) {
 $routes->group("api/form", function ($routes) {
     $routes->get('getallform/(:any)', 'Form::getallformtype/$1');
     $routes->get('getalljenispeminjaman/(:any)/(:any)', 'Form::getalljenispeminjaman/$1/$2');
+    $routes->get('getjenispeminjaman/(:any)/(:any)', 'Form::getjenispeminjaman/$1/$2');
     $routes->get('getallpermohonan/(:any)/(:any)', 'Form::getallpermohonan/$1/$2');
     $routes->get('getallpermohonan/(:any)', 'Form::getallpermohonan/$1');
     $routes->get('countnotif/(:any)', 'Form::countunreadnotif/$1');

@@ -7,6 +7,12 @@ use App\Models\UserApiLoginModel;
 class User extends ResourceController
 {
     use ResponseTrait;
+
+    public function index()
+    {
+        return view('welcome_message');
+    }
+    
     public function login(){
         $email = $this->request->getVar('email');
         $password = $this->request->getVar('password');

@@ -70,6 +70,35 @@ class Form extends ResourceController
         return $this->respond($response);
    }
 
+   public function getjenispeminjaman($user_token, $jenis_peminjaman_id) {
+        $response = array();
+        if(UserModel::isUserTokenValid($user_token)) {
+            $jenis_peminjaman_model = new JenisPeminjamanModel();
+            $jenis_peminjaman_data = $jenis_peminjaman_model->find($jenis_peminjaman_id);
+
+            if($jenis_peminjaman_data) {
+                $response = array(
+                    'status' => 200,
+                    'data'  => $jenis_peminjaman_data['jenis_peminjaman']
+                );
+               
+            } else {
+                $response = array(
+                    'status' => 201,
+                    'data' => []
+                );
+            }
+
+        } else {
+            $response = array(
+                'status' => 201,
+                'message' => 'Invalid user token'
+            );
+        }
+
+        return $this->respond($response);
+   }
+
    public function getallpermohonan($user_token, $keyword="") {
         $response = array();
 
@@ -537,11 +566,21 @@ class Form extends ResourceController
             $user_id = UserApiLoginModel::getUserID($user_token);
             $permohonan_id = $this->request->getVar('permohonan_id');
             $form_id = $this->request->getVar('form_id');
+            $jenis_peminjaman_id = $this->request->getVar('jenis_peminjaman_id');
+            $perihal = $this->request->getVar('perihal');
+
+            if($jenis_peminjaman_id > 0) {
+                $jenis_peminjaman_model = new JenisPeminjamanModel();
+                $jenis_peminjaman_data = $jenis_peminjaman_model->find($jenis_peminjaman_id);
+                if($jenis_peminjaman_data) {
+                    $perihal .= ' '.$jenis_peminjaman_data['jenis_peminjaman'];
+                }
+            }
 
             $data = [
                 'form_id' => $form_id,
-                'jenis_peminjaman_id' => $this->request->getVar('jenis_peminjaman_id'),
-                'perihal' => $this->request->getVar('perihal'),
+                'jenis_peminjaman_id' => $jenis_peminjaman_id,
+                'perihal' => $perihal,
                 'nrp' => $this->request->getVar('nrp'),
                 'nama' => $this->request->getVar('nama'),
                 'universitas' => $this->request->getVar('universitas'),
@@ -894,7 +933,7 @@ class Form extends ResourceController
                 $permohonan_model->update($permohonan_data['permohonan_id'], ['pdf_filename' => $filename]);
                 $response = array(
                     'status' => 200,
-                    'link' => 'http://192.168.1.66:8080/documents/'.$filename
+                    'link' => 'http://34.101.208.151/agutask/persuratan/persuratan-api/rest-api-persuratan/public/documents/'.$filename
 
                 );
                
@@ -915,4 +954,5 @@ class Form extends ResourceController
 
         return $this->respond($response);
    }
+
 }
