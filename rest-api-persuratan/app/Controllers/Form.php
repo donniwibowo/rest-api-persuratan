@@ -52,12 +52,14 @@ class Form extends ResourceController
             if($jenis_peminjaman_data) {
                 $response = array(
                     'status' => 200,
-                    'data' => $jenis_peminjaman_data
+                    'data' => $jenis_peminjaman_data,
+                    'len_data' => count($jenis_peminjaman_data)
                 );
             } else {
                 $response = array(
                     'status' => 200,
-                    'data' => null
+                    'data' => [],
+                    'len_data' => 0
                 );    
             }
         } else {
@@ -569,13 +571,13 @@ class Form extends ResourceController
             $jenis_peminjaman_id = $this->request->getVar('jenis_peminjaman_id');
             $perihal = $this->request->getVar('perihal');
 
-            if($jenis_peminjaman_id > 0) {
-                $jenis_peminjaman_model = new JenisPeminjamanModel();
-                $jenis_peminjaman_data = $jenis_peminjaman_model->find($jenis_peminjaman_id);
-                if($jenis_peminjaman_data) {
-                    $perihal .= ' '.$jenis_peminjaman_data['jenis_peminjaman'];
-                }
-            }
+            // if($jenis_peminjaman_id > 0) {
+            //     $jenis_peminjaman_model = new JenisPeminjamanModel();
+            //     $jenis_peminjaman_data = $jenis_peminjaman_model->find($jenis_peminjaman_id);
+            //     if($jenis_peminjaman_data) {
+            //         $perihal .= ' '.$jenis_peminjaman_data['jenis_peminjaman'];
+            //     }
+            // }
 
             $data = [
                 'form_id' => $form_id,

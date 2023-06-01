@@ -103,4 +103,22 @@ class User extends ResourceController
 
         return $this->respond($response);
     }
+
+    public function islogin($user_token) {
+        $response = array();
+
+        if(UserModel::isUserTokenValid($user_token)) {
+            $response = array(
+                'status' => 200,
+                'message' => 1
+            );
+        } else {
+            $response = array(
+                'status' => 200,
+                'message' => 0
+            );
+        }
+
+        return $this->respond($response);
+   }
 }

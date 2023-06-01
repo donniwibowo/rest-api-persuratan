@@ -35,6 +35,7 @@ $routes->group("api/user", function ($routes) {
     $routes->get('index', 'User::index');
     $routes->post('login', 'User::login');
     $routes->post('logout', 'User::logout');
+    $routes->get('islogin/(:any)', 'User::islogin/$1');
     // $routes->post('test-post/(:any)/(:any)', 'Employee::testpost/$1/$2');
 });
 
