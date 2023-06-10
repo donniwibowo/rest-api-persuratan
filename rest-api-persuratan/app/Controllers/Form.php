@@ -571,14 +571,6 @@ class Form extends ResourceController
             $jenis_peminjaman_id = $this->request->getVar('jenis_peminjaman_id');
             $perihal = $this->request->getVar('perihal');
 
-            // if($jenis_peminjaman_id > 0) {
-            //     $jenis_peminjaman_model = new JenisPeminjamanModel();
-            //     $jenis_peminjaman_data = $jenis_peminjaman_model->find($jenis_peminjaman_id);
-            //     if($jenis_peminjaman_data) {
-            //         $perihal .= ' '.$jenis_peminjaman_data['jenis_peminjaman'];
-            //     }
-            // }
-
             $data = [
                 'form_id' => $form_id,
                 'jenis_peminjaman_id' => $jenis_peminjaman_id,

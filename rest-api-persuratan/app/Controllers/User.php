@@ -53,7 +53,7 @@ class User extends ResourceController
                     'data'   => [
                         'user_token'    => UserModel::encrypt($api_login_model->insertID),
                         'user_id'       => $data['user_id'],
-                        'is_superadmin' => $data['is_superadmin'],
+                        'is_superadmin' => $data['is_superadmin'] == null || $data['is_superadmin'] == "" ? "0" : "1",
                         'email'         => $data['email'],
                         'phone'         => $data['phone'],
                         'fullname'      => ucwords(strtolower($data['fullname'])),
