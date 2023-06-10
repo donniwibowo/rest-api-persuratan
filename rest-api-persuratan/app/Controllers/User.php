@@ -48,12 +48,17 @@ class User extends ResourceController
 
                 $api_login_model->insert($api_data);
 
+                $is_superadmin = $data['is_superadmin'].'';
+                if($is_superadmin == '' || $is_superadmin == null) {
+                    $is_superadmin = "0";
+                }
+
                 $result = array(
                     'status' => 200,
                     'data'   => [
                         'user_token'    => UserModel::encrypt($api_login_model->insertID),
                         'user_id'       => $data['user_id'],
-                        'is_superadmin' => $data['is_superadmin'] == null || $data['is_superadmin'] == "" ? "0" : "1",
+                        'is_superadmin' => $is_superadmin,
                         'email'         => $data['email'],
                         'phone'         => $data['phone'],
                         'fullname'      => ucwords(strtolower($data['fullname'])),
