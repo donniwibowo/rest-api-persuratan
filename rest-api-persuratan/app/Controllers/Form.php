@@ -919,7 +919,7 @@ class Form extends ResourceController
 
                 // $pdf->Cell(50, 10, strtoupper(strtolower($permohonan_data['status'])));
                 if(strtolower($permohonan_data['status']) == 'approved') {
-                    $pdf->Image('documents/'.$user_data['ttd'],150,152,40);
+                    $pdf->Image('http://34.101.208.151/agutask/dms/uploads/documents/'.$user_data['ttd'],150,152,40);
                 } else if(strtolower($permohonan_data['status']) == 'rejected') {
                     $pdf->Image('documents/rejected-stamp.png',150,152,40);
                 }
