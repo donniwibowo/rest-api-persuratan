@@ -6,6 +6,8 @@ use App\Models\UserApiLoginModel;
 use App\Models\PermohonanModel;
 use App\Models\FormModel;
 use App\Models\JenisPeminjamanModel;
+use App\Models\PerusahaanModel;
+
 use App\ThirdParty\fpdf\FPDF;
 
 class Form extends ResourceController
@@ -571,13 +573,23 @@ class Form extends ResourceController
             $jenis_peminjaman_id = $this->request->getVar('jenis_peminjaman_id');
             $perihal = $this->request->getVar('perihal');
 
+
+            $user_model = new UserModel();
+            $user_data = $user_model->find($user_id);
+
+            $perusahaan_model = new PerusahaanModel();
+            $perusahaan_data = $perusahaan_model->find($user_data['perusahaan_id']);
+
             $data = [
                 'form_id' => $form_id,
                 'jenis_peminjaman_id' => $jenis_peminjaman_id,
                 'perihal' => $perihal,
-                'nrp' => $this->request->getVar('nrp'),
-                'nama' => $this->request->getVar('nama'),
-                'universitas' => $this->request->getVar('universitas'),
+                'nama' => $user_data['fullname'],
+                'universitas' => $perusahaan_data['name'],
+                'nrp' => $user_id.$user_data['perusahaan_id'].$form_id.$jenis_peminjaman_id.round(microtime(true)),
+                // 'nrp' => $this->request->getVar('nrp'),
+                // 'nama' => $this->request->getVar('nama'),
+                // 'universitas' => $this->request->getVar('universitas'),
                 'keterangan' => $this->request->getVar('keterangan'),
                 'date_start' => date('Y-m-d H:i:s', strtotime($this->request->getVar('date_start'))),
                 'date_end' => date('Y-m-d H:i:s', strtotime($this->request->getVar('date_end'))),
@@ -786,9 +798,19 @@ class Form extends ResourceController
         $response = array();
         $filename = 'default.pdf';
         if(UserModel::isUserTokenValid($user_token)) {
+            $user_id = UserApiLoginModel::getUserID($user_token);
             $user_model = new UserModel();
             $permohonan_model = new PermohonanModel();
             $permohonan_data = $permohonan_model->find($permohonan_id);
+
+            $user_data = $user_model->find($user_id);
+            $perusahaan_model = new PerusahaanModel();
+            $perusahaan_data = $perusahaan_model->find($user_data['perusahaan_id']);
+
+            $perusahaan_name = $perusahaan_data['name'];
+            $perusahaan_address = $perusahaan_data['address'];
+            $perusahaan_email = $perusahaan_data['email'];
+            $perusahaan_phone = $perusahaan_data['phone'];
 
             if($permohonan_data) {
                 $form_model = new FormModel();
@@ -806,14 +828,15 @@ class Form extends ResourceController
                 // Move to the right
                 $pdf->Cell(10);
                 // Title
-                $pdf->Cell(200,10,'PT. INTEGRA TEKNOLOGI SOLUSI', 0, 0, 'C');
+                $pdf->Cell(200,10,strtoupper($perusahaan_name), 0, 0, 'C');
                 $pdf->Ln(5);
                 $pdf->SetFont('Arial','B',9);
                 $pdf->Cell(10);
-                $pdf->Cell(200,10,'Wisma Medokan Asri, Jl. Medokan Asri Utara XV No.10, Medokan Ayu', 0, 0, 'C');
+                $pdf->Cell(200,10,$perusahaan_address, 0, 0, 'C');
+                // $pdf->Cell(200,10,'Wisma Medokan Asri, Jl. Medokan Asri Utara XV No.10, Medokan Ayu', 0, 0, 'C');
                 $pdf->Ln(4);
                 $pdf->Cell(10);
-                $pdf->Cell(200,10,'Rungkut, Surabaya City, East Java 60295', 0, 1, 'C');
+                $pdf->Cell(200,10,'Phone. '.$perusahaan_phone.' | Email. '.$perusahaan_email, 0, 1, 'C');
                 // Line break
                 $pdf->Ln(5);
                 $pdf->Line(10, 30, 210-10, 30); // 20mm from each edge
@@ -827,7 +850,7 @@ class Form extends ResourceController
 
                 $pdf->SetFont('');
                 $pdf->Cell(15);
-                $pdf->Cell(35, 20, 'NRP');
+                $pdf->Cell(35, 20, 'Dokumen ID');
                 $pdf->Cell(200, 20, ': '.$permohonan_data['nrp']);
 
                 $pdf->Ln(5);
@@ -838,11 +861,11 @@ class Form extends ResourceController
 
                 $pdf->Ln(5);
 
-                $pdf->Cell(15);
-                $pdf->Cell(35, 20, 'Universitas');
-                $pdf->Cell(200, 20, strtoupper(strtolower(': '.$permohonan_data['universitas'])));
+                // $pdf->Cell(15);
+                // $pdf->Cell(35, 20, 'Universitas');
+                // $pdf->Cell(200, 20, strtoupper(strtolower(': '.$permohonan_data['universitas'])));
 
-                $pdf->Ln(5);
+                // $pdf->Ln(5);
 
                 $pdf->Cell(15);
                 $pdf->Cell(35, 20, 'Perihal');
